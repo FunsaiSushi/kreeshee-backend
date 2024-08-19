@@ -1,7 +1,7 @@
 // supply.model.js
 
 import mongoose from "mongoose";
-import { setProduceType } from "../middlewares/supply.middleware.js";
+import { setProduceType } from "../middlewares/supplyType.js";
 
 const { Schema } = mongoose;
 
@@ -35,6 +35,6 @@ const supplySchema = new Schema(
 // Pre-save hook to automatically set the produceType based on the produceName
 supplySchema.pre("save", setProduceType);
 
-const supply = mongoose.model("supply", supplySchema);
+const Supply = mongoose.model("supply", supplySchema);
 
-export default supply;
+export default Supply;

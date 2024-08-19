@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import http from "http";
 import cors from "cors";
+import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -10,6 +11,8 @@ import connectToMongoDB from "./config/database.js";
 
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import postRoutes from "./routes/post.routes.js";
+
 // import characterRoutes from "./routes/character.routes.js";
 // import postRoutes from "./routes/post.routes.js";
 // import friendRequestRoutes from "./routes/friendRequest.routes.js";
@@ -17,6 +20,9 @@ import userRoutes from "./routes/user.routes.js";
 // import recentSearches from "./routes/recentSearch.routes.js";
 
 const app = express();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Resolve __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -41,6 +47,7 @@ const server = http.createServer(app);
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/post", postRoutes);
 // app.use("/api/characters", characterRoutes);
 // app.use("/api/posts", postRoutes);
 // app.use("/api/friends", friendRequestRoutes);

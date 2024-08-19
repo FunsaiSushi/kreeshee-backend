@@ -109,3 +109,39 @@ export const postSupply = async (req, res) => {
       .json({ message: "An error occurred while creating the supply post" });
   }
 };
+
+export const getSupplies = async (req, res) => {
+  try {
+    // Get the page and limit query parameters from the request for pagination
+    const page = parseInt(req.query.page) || 1; // Default to page 1 if not specified
+    const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
+
+    // Calculate the skip value for pagination
+    const skip = (page - 1) * limit;
+
+    // Fetch supplies from the database with pagination
+    const supplies = await Supply.find({})
+      .sort({ createdAt: -1 }) // Sort by newest first
+      .skip(skip)
+      .limit(limit);
+
+    // Fetch the total number of supplies for pagination metadata
+    const totalSupplies = await Supply.countDocuments();
+
+    // Respond with the fetched supplies and pagination metadata
+    res.status(200).json({
+      supplies,
+      pagination: {
+        total: totalSupplies,
+        page,
+        pages: Math.ceil(totalSupplies / limit),
+        limit,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching supplies:", error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while fetching the supply posts" });
+  }
+};

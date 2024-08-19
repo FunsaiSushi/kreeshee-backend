@@ -48,7 +48,6 @@ const userSchema = new Schema(
         "Researcher",
         "Other",
       ],
-      required: true,
     },
 
     birthAddress: String,

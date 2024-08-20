@@ -35,7 +35,7 @@ app.use(
     origin: [
       "http://localhost:3000",
       "https://kreeshee.web.app",
-      "https://kreeshee.vercel.app/",
+      "https://kreeshee.vercel.app",
     ],
     credentials: true,
   })

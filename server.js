@@ -32,7 +32,11 @@ const app = express();
 // Middleware setup
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://kreeshee.web.app"],
+    origin: [
+      "http://localhost:3000",
+      "https://kreeshee.web.app",
+      "https://kreeshee.vercel.app/",
+    ],
     credentials: true,
   })
 );

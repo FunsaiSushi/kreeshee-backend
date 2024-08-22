@@ -1,5 +1,3 @@
-// supply.model.js
-
 import mongoose from "mongoose";
 import { setProduceType } from "../middlewares/supplyType.js";
 
@@ -7,34 +5,47 @@ const { Schema } = mongoose;
 
 const supplySchema = new Schema(
   {
-    seller: { type: String, required: true }, // Name or ID of the producing company
+    sellerID: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    seller: {
+      type: String,
+      required: true,
+    },
     productName: { type: String, required: true },
     productType: { type: String },
-    productImages: [{ type: String }], // also make this required
-    amount: {
-      value: { type: Number, required: true },
-      unit: { type: String, required: true },
+    productImages: [{ type: String, required: true }],
+    postCoverImage: { type: String, required: true },
+    buyingOptions: {
+      type: String,
+      enum: ["Retail", "Wholesale", "Auction"],
+      required: true,
     },
-    price: {
-      value: { type: String, required: true }, // String for numerical value and currency
-      isFixed: { type: Boolean, default: false }, // Checkbox for indicating if the price is negotiable
+    totalQuantity: { type: String, required: true },
+    retailPrice: {
+      value: { type: String },
+      unit: { type: String },
     },
-    deliveryDate: {
-      startDate: { type: Date, required: true },
-      endDate: { type: Date, required: true },
+    wholesalePrice: {
+      value: { type: String },
+      unit: { type: String },
     },
-    expiryDate: { type: Date }, // Expiry date of the supply
-    status: { type: String, default: "pending" }, // Status of the supply (e.g., pending, accepted, rejected)
-    notes: { type: String, default: "" }, // Additional notes or comments
+    auction: {
+      minBidPrice: { type: String }, // Minimum bid price for auction
+      bidUnit: { type: String }, // e.g., "100 tk per 1 kg"
+    },
+    status: { type: String, default: "pending" }, // Status of the supply
+    description: { type: String, default: "" }, // Additional notes or comments
     bids: [{ type: mongoose.Schema.Types.ObjectId, ref: "Bid" }],
+    reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }], // Reference to Review documents
   },
-
   { timestamps: true }
 );
 
-// Pre-save hook to automatically set the produceType based on the produceName
 supplySchema.pre("save", setProduceType);
 
-const Supply = mongoose.model("supply", supplySchema);
+const Supply = mongoose.model("Supply", supplySchema);
 
 export default Supply;

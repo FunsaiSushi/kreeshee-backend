@@ -1,11 +1,11 @@
-import cloudinary from "../../config/cloudinary.config.js"; // Assuming you have your cloudinary config file
-import supplyMulter from "../../config/supplyMulter.js";
-import Supply from "../../models/supply.model.js"; // Assuming you have a Supply model
 import streamifier from "streamifier";
+import cloudinary from "../../config/cloudinary.config.js";
+import Supply from "../../models/supply.model.js";
+import supplyMulter from "../../config/supplyMulter.js";
 
 export const postSupply = async (req, res) => {
   try {
-    // Handle the image and video uploads using multer
+    // Handle the image uploads using multer
     supplyMulter(req, res, async (err) => {
       if (err) {
         return res
@@ -14,7 +14,10 @@ export const postSupply = async (req, res) => {
       }
 
       // Extract uploaded files from req.files
-      const { productImages, productVideo } = req.files;
+      const { productImages } = req.files;
+
+      // Extract postCover index from req.body
+      const { postCover } = req.body;
 
       // Function to upload an image buffer to Cloudinary
       const uploadToCloudinary = (
@@ -31,7 +34,7 @@ export const postSupply = async (req, res) => {
               public_id: publicId,
             },
             (error, result) => {
-              if (result) resolve(result.secure_url); // Resolve with the URL
+              if (result) resolve(result.secure_url);
               else reject(error);
             }
           );
@@ -52,61 +55,81 @@ export const postSupply = async (req, res) => {
         })
       );
 
-      // Upload video to Cloudinary (if present)
-      let uploadedVideo = null;
-      if (productVideo && productVideo.length > 0) {
-        const video = productVideo[0];
-        uploadedVideo = await uploadToCloudinary(
-          video.buffer,
-          "posts/videos",
-          "video",
-          `${req.body.productName}_${Date.now()}`
-        );
+      // Extract the rest of the form data from req.body
+      const {
+        productName,
+        quantity,
+        buyingOptions,
+        retailPriceValue,
+        retailPriceUnit,
+        wholesalePriceValue,
+        wholesalePriceUnit,
+        minBidPrice,
+        bidUnit,
+        description,
+      } = req.body;
+
+      // Validate required fields based on buyingOptions
+      let retailPrice, wholesalePrice, auction;
+      if (buyingOptions === "Retail") {
+        if (!retailPriceValue || !retailPriceUnit) {
+          return res
+            .status(400)
+            .json({ message: "Retail price and unit are required" });
+        }
+        retailPrice = {
+          value: retailPriceValue,
+          unit: retailPriceUnit,
+        };
+      } else if (buyingOptions === "Wholesale") {
+        if (!wholesalePriceValue || !wholesalePriceUnit) {
+          return res
+            .status(400)
+            .json({ message: "Wholesale price and unit are required" });
+        }
+        wholesalePrice = {
+          value: wholesalePriceValue,
+          unit: wholesalePriceUnit,
+        };
+      } else if (buyingOptions === "Auction") {
+        if (!minBidPrice || !bidUnit) {
+          return res.status(400).json({
+            message: "Minimum bid price and unit are required for auction",
+          });
+        }
+        auction = {
+          minBidPrice,
+          bidUnit,
+        };
       }
 
-      // Now extract the rest of the form data from req.body
-      const {
-        seller,
-        productName,
-        productType,
-        amountValue,
-        amountUnit,
-        priceValue,
-        isFixed,
-        startDate,
-        endDate,
-        expiryDate,
-        notes,
-      } = req.body;
+      // Get the URL of the selected cover image using the postCover index
+      const postCoverImageUrl = uploadedImages[postCover];
 
       // Create a new supply object
       const newSupply = new Supply({
-        seller,
+        sellerID: req.user._id, // User ID
+        seller: req.user.name, // Seller's name
         productName,
-        productType,
         productImages: uploadedImages,
-        productVideo: uploadedVideo,
-        amount: { value: amountValue, unit: amountUnit },
-        price: { value: priceValue, isFixed },
-        deliveryDate: {
-          startDate: req.body.startDate,
-          endDate: req.body.endDate,
-        },
-        expiryDate,
-        notes,
+        postCoverImage: postCoverImageUrl, // Add cover image URL
+        totalQuantity: quantity,
+        buyingOptions,
+        retailPrice,
+        wholesalePrice,
+        auction,
+        description,
       });
 
-      // Save the new supply post to the database
       const savedSupply = await newSupply.save();
 
-      // Respond with the newly created supply post
       res.status(200).json(savedSupply);
     });
   } catch (error) {
     console.error("Error creating supply post:", error);
-    res
-      .status(500)
-      .json({ message: "An error occurred while creating the supply post" });
+    res.status(500).json({
+      message: "An error occurred while creating the supply post",
+    });
   }
 };
 
@@ -140,8 +163,8 @@ export const getSupplies = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching supplies:", error);
-    res
-      .status(500)
-      .json({ message: "An error occurred while fetching the supply posts" });
+    res.status(500).json({
+      message: "An error occurred while fetching the supply posts",
+    });
   }
 };

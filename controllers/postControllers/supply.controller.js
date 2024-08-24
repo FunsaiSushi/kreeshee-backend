@@ -137,7 +137,7 @@ export const getSupplies = async (req, res) => {
   try {
     // Get the page and limit query parameters from the request for pagination
     const page = parseInt(req.query.page) || 1; // Default to page 1 if not specified
-    const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
+    const limit = parseInt(req.query.limit) || 12; // Default to 10 items per page
 
     // Calculate the skip value for pagination
     const skip = (page - 1) * limit;

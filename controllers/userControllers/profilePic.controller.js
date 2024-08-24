@@ -25,10 +25,10 @@ export const uploadProfilePic = async (req, res) => {
           const stream = cloudinary.uploader.upload_stream(
             {
               folder,
-              public_id: `${Date.now()}`, // Use timestamp as the filename
+              public_id: `${Date.now()}`,
             },
             (error, result) => {
-              if (result) resolve(result.secure_url); // Resolve with the URL
+              if (result) resolve(result.secure_url);
               else reject(error);
             }
           );
@@ -50,20 +50,15 @@ export const uploadProfilePic = async (req, res) => {
       user.profilePic = profilePicUrl;
       await user.save();
 
-      // Respond with the updated profile picture URL
-      res
-        .status(200)
-        .json({
-          message: "Profile picture uploaded successfully",
-          profilePicUrl,
-        });
+      res.status(200).json({
+        message: "Profile picture uploaded successfully",
+        profilePicUrl,
+      });
     });
   } catch (error) {
     console.error("Error uploading profile picture:", error);
-    res
-      .status(500)
-      .json({
-        message: "An error occurred while uploading the profile picture",
-      });
+    res.status(500).json({
+      message: "An error occurred while uploading the profile picture",
+    });
   }
 };

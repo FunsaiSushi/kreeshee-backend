@@ -1,31 +1,34 @@
-// demand.model.js
-
 import mongoose from "mongoose";
 
 const demandSchema = new mongoose.Schema(
   {
-    produceType: { type: String, required: true },
-    produceName: { type: String, required: true },
-    amount: {
-      value: { type: Number, required: true },
-      unit: { type: String, required: true },
+    creatorID: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-    timeFrame: { type: String, required: true },
-    company: { type: String, required: true },
-    offers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Offer" }],
-    location: { type: String, default: "" },
+    creatorName: { type: String, required: true },
+    productName: { type: String, required: true },
+    quantity: { type: String, required: true },
+    demandStartDate: { type: Date, default: Date.now, required: true },
+    demandDeadline: { type: Date, required: true },
+    company: { type: String }, // make it required later
+    deliveryLocation: { type: String, required: true }, // where do you want your products to be delivered
     contactInfo: { type: String, default: "" },
-    qualityRequirements: { type: String, default: "" },
-    deliveryPreferences: { type: String, default: "" },
-    budget: { type: String, default: "" },
-    packagingRequirements: { type: String, default: "" },
-    specialInstructions: { type: String, default: "" },
-    status: { type: String, default: "open" },
-    priorityLevel: { type: String, default: "normal" },
+    offers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Offer" }],
+    // offers to a demand are like comments on a facebook post
+    demandNotes: { type: String, default: "" },
     feedback: { type: Object, default: {} },
-    contractTerms: { type: String, default: "" },
-    expiryDate: { type: Date },
-    paymentTerms: { type: String, default: "" },
+
+    // budget: { type: String, default: "" },
+    // qualityRequirements: { type: String, default: "" },
+    // deliveryPreferences: { type: String, default: "" },
+    // packagingRequirements: { type: String, default: "" },
+    // specialInstructions: { type: String, default: "" },
+    // contractTerms: { type: String, default: "" },
+    // paymentTerms: { type: String, default: "" },
+    // status: { type: String, enum: ["active", "inactive"], }, depending on demandStartdate and deadline
+    // priorityLevel: { type: String, default: "normal" },
   },
   { timestamps: true }
 );

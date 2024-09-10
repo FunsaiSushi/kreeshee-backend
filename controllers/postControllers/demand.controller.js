@@ -77,3 +77,35 @@ export const getDemands = async (req, res) => {
     });
   }
 };
+
+export const getDemandDetails = async (req, res) => {
+  try {
+    // Extract demand ID from the request parameters
+    const { demandId } = req.params;
+
+    // Find the demand by ID and populate the offers field
+    // const demand = await Demand.findById(demandId);
+    const demand = await Demand.findById(demandId).populate("offers");
+
+    // If the demand does not exist, return a 404 response
+    if (!demand) {
+      return res.status(404).json({
+        success: false,
+        message: "Demand not found",
+      });
+    }
+
+    // Return the demand details if found
+    res.status(200).json({
+      success: true,
+      data: demand,
+    });
+  } catch (error) {
+    console.error("Error fetching demand details:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching the demand details",
+      error: error.message,
+    });
+  }
+};

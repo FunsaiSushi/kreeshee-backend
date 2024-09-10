@@ -1,29 +1,62 @@
 import User from "../../models/user.model.js";
 
 const editUserBasicInfo = async (req, res) => {
-  const userId = req.userId;
-
   try {
-    // Find the user by ID
-    let user = await User.findById(userId);
+    const userId = req.user.id; // Assuming `req.user.id` is set by protectRoute middleware after authentication
+    const {
+      role,
+      birthAddress,
+      currentAddress,
+      workAddress,
+      dob,
+      gender,
+      religion,
+      bio,
+    } = req.body;
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    // Check if at least one field is provided for update
+    if (
+      !role &&
+      !birthAddress &&
+      !currentAddress &&
+      !workAddress &&
+      !dob &&
+      !gender &&
+      !religion &&
+      !bio
+    ) {
+      return res.status(400).json({ message: "No data provided for update." });
     }
 
-    // Update user object with the fields from request body
-    for (const key in req.body) {
-      if (Object.hasOwnProperty.call(req.body, key)) {
-        user[key] = req.body[key];
-      }
+    // Construct the update object dynamically based on provided fields
+    const updatedFields = {};
+    if (role) updatedFields.role = role;
+    if (birthAddress) updatedFields.birthAddress = birthAddress;
+    if (currentAddress) updatedFields.currentAddress = currentAddress;
+    if (workAddress) updatedFields.workAddress = workAddress;
+    if (dob) updatedFields.dob = dob;
+    if (gender) updatedFields.gender = gender;
+    if (religion) updatedFields.religion = religion;
+    if (bio) updatedFields.bio = bio;
+
+    // Find the user and update
+    const updatedUser = await User.findByIdAndUpdate(userId, updatedFields, {
+      new: true, // Return the updated user
+      runValidators: true, // Ensure Mongoose validators are applied
+    });
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found." });
     }
 
-    // Save the updated user
-    user = await user.save();
-
-    res.status(200).json({ message: "User info updated successfully", user });
+    return res.status(200).json({
+      message: "User information updated successfully.",
+      user: updatedUser,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    return res
+      .status(500)
+      .json({ message: "Server error.", error: error.message });
   }
 };
 

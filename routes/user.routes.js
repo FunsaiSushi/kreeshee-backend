@@ -4,6 +4,7 @@ import protectRoute from "../middlewares/protectRoute.js";
 import getUserData from "../controllers/userControllers/user.controller.js";
 import { uploadProfilePic } from "../controllers/userControllers/profilePic.controller.js";
 import editUserBasicInfo from "../controllers/userControllers/editUserBasicInfo.controller.js";
+import getUserBasicInfo from "../controllers/userControllers/getUserBasicInfo.controller.js";
 
 // import {
 //   searchUser,
@@ -14,6 +15,7 @@ const router = express.Router();
 
 router.post("/upload-profile-pic", protectRoute, uploadProfilePic);
 router.post("/edit-user-basic-info", protectRoute, editUserBasicInfo);
+router.post("/get-user-basic-info", protectRoute, getUserBasicInfo);
 
 router.get("/about", protectRoute, getUserData);
 

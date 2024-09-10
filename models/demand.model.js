@@ -12,8 +12,8 @@ const demandSchema = new mongoose.Schema(
     quantity: { type: String, required: true },
     demandStartDate: { type: Date, default: Date.now, required: true },
     demandDeadline: { type: Date, required: true },
-    company: { type: String }, // make it required later
-    deliveryLocation: { type: String, required: true }, // where do you want your products to be delivered
+    company: { type: String },
+    deliveryLocation: { type: String, required: true },
     contactInfo: { type: String, default: "" },
     offers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Offer" }],
     // offers to a demand are like comments on a facebook post

@@ -6,8 +6,10 @@ import {
 import {
   postDemand,
   getDemands,
+  getDemandDetails,
 } from "../controllers/postControllers/demand.controller.js";
 import protectRoute from "../middlewares/protectRoute.js";
+import { postOffer } from "../controllers/postControllers/offer.controller.js";
 
 const router = express.Router();
 
@@ -16,5 +18,8 @@ router.get("/supplies", getSupplies);
 
 router.post("/create-demand", protectRoute, postDemand);
 router.get("/demands", getDemands);
+router.get("/demands/:demandId", getDemandDetails);
+
+router.post("/create-offer", protectRoute, postOffer);
 
 export default router;

@@ -1,15 +1,6 @@
 import path from "path";
 
-// Utility function to filter image files
 export const imageFileFilter = (req, file, cb) => {
-  //   if (typeof cb !== "function") {
-  //     throw new TypeError("Callback function is required");
-  //   }
-
-  //   if (!file || !file.originalname) {
-  //     return cb(new Error("File is missing or invalid"));
-  //   }
-
   const imageTypes = /jpeg|jpg|png|gif|webp|tiff/; // Add more allowed types if needed
   const extname = imageTypes.test(
     path.extname(file.originalname).toLowerCase()

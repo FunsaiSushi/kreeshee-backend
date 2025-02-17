@@ -13,6 +13,7 @@ import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import postRoutes from "./routes/post.routes.js";
 import truckRoutes from "./routes/truck.routes.js";
+import searchRoutes from "./routes/search.routes.js";
 
 // import characterRoutes from "./routes/character.routes.js";
 // import postRoutes from "./routes/post.routes.js";
@@ -58,11 +59,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/truck", truckRoutes);
-// app.use("/api/characters", characterRoutes);
-// app.use("/api/posts", postRoutes);
-// app.use("/api/friends", friendRequestRoutes);
-// app.use("/api/notifications", notificationRoutes);
-// app.use("/api/search", recentSearches);
+app.use("/api/search", searchRoutes);
 
 const PORT = process.env.PORT || 5000;
 dotenv.config();
